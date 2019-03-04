@@ -1,6 +1,6 @@
 {
   "name": "simple-type-assert",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A simplified way of verifying variable types.",
   "main": "src/index.js",
   "scripts": {
