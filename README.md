@@ -8,7 +8,20 @@ A simplified way of verifying variable types.
 	$ npm install simple-type-assert
 ```
 
-## Example
+## Methods
+### Type.get()
+Returns the type of any provided variable.
+``` javascript
+	Type.get(input);
+```
+
+### Type.assert()
+Throws an exception anytime the input does not match the type.
+``` javascript
+	Type.assert(input, type);
+```
+
+## Examples
 
 ``` javascript
 	const Type = require('simple-type-assert');
