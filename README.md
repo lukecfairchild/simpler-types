@@ -60,4 +60,17 @@ Returns true/false based on if input matches the type.
 	Type.assert(null, null);
 	Type.assert(undefined, undefined);
 	Type.assert(Symbol('id'), Symbol);
+
+	Type.is(myInstance, MyClass); // true
+	Type.is(0, Number); // true
+	Type.is('', String); // true
+	Type.is(false, Boolean); // true
+	Type.is(() => {}, Function); // true
+	Type.is([], Array); // true
+	Type.is({}, Object); // true
+	Type.is(NaN, NaN); // true
+	Type.is('', NaN); // true
+	Type.is(null, null); // true
+	Type.is(undefined, undefined); // true
+	Type.is(Symbol('id'), Symbol); // true
 ```
