@@ -28,6 +28,8 @@ Throws an exception anytime the input does not match the type.
 
 	class MyClass {}
 
+	const myInstance = new MyClass();
+
 	Type.get(myInstance); // MyClass
 	Type.get(0); // Number
 	Type.get(''); // String
