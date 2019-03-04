@@ -9,16 +9,22 @@ A simplified way of verifying variable types.
 ```
 
 ## Methods
+### Type.assert()
+Throws an exception anytime the input does not match the type.
+``` javascript
+	Type.assert(input, type);
+```
+
 ### Type.get()
 Returns the type of any provided variable.
 ``` javascript
 	Type.get(input);
 ```
 
-### Type.assert()
-Throws an exception anytime the input does not match the type.
+### Type.is()
+Returns true/false based on if input matches the type.
 ``` javascript
-	Type.assert(input, type);
+	Type.is(input, type);
 ```
 
 ## Examples

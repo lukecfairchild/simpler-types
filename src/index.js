@@ -114,10 +114,6 @@ const Type = (...args) => {
 	return valueType === type;
 }
 
-Type.get = (value) => {
-	return getTypeInfo(value).name;
-}
-
 Type.assert = (value, type) => {
 	const valueTypeInfo = getTypeInfo(value);
 	const typeInfo      = getTypeInfo(type);
@@ -127,6 +123,17 @@ Type.assert = (value, type) => {
 			`Incorrect type recieved.\n  expected: ${typeInfo.name} \n  recieved: ${valueTypeInfo.name}\n  value: ${valueTypeInfo.value}`
 		);
 	}
+}
+
+Type.get = (value) => {
+	return getTypeInfo(value).name;
+}
+
+Type.is = (value, type) => {
+	const valueTypeInfo = getTypeInfo(value);
+	const typeInfo      = getTypeInfo(type);
+
+	return Type(value, type);
 }
 
 
