@@ -24,9 +24,7 @@ const toString = (value) => {
 	}
 }
 
-const Type = {};
-
-Type.getTypeName = (type) => {
+const getTypeName = (type) => {
 	if (type === undefined) {
 		return 'undefined';
 	}
@@ -43,10 +41,12 @@ Type.getTypeName = (type) => {
 	return type.name;
 }
 
+const Type = {};
+
 Type.assert = (value, type) => {
 	if (!Type.is(value, type)) {
 		throw new Error(
-			`Incorrect type recieved.\n  expected: ${Type.getTypeName(type)} \n  recieved: ${Type.get(value)}\n  value: ${toString(value)}`
+			`Incorrect type recieved.\n  expected: ${getTypeName(type)} \n  recieved: ${Type.get(value)}\n  value: ${toString(value)}`
 		);
 	}
 }
