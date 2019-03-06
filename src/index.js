@@ -43,7 +43,15 @@ Type.getTypeName = (type) => {
 	return type.name;
 }
 
-Type.getValueType = (value) => {
+Type.assert = (value, type) => {
+	if (!Type.is(value, type)) {
+		throw new Error(
+			`Incorrect type recieved.\n  expected: ${Type.getTypeName(type)} \n  recieved: ${Type.get(value)}\n  value: ${toString(value)}`
+		);
+	}
+}
+
+Type.get = (value) => {
 	if (value === undefined) {
 		return 'undefined';
 	}
@@ -87,20 +95,8 @@ Type.getValueType = (value) => {
 	}
 }
 
-Type.assert = (value, type) => {
-	if (!Type.is(value, type)) {
-		throw new Error(
-			`Incorrect type recieved.\n  expected: ${Type.getTypeName(type)} \n  recieved: ${Type.getValueType(value)}\n  value: ${toString(value)}`
-		);
-	}
-}
-
-Type.get = (value) => {
-	return Type.getValueType(value);
-}
-
 Type.is = (value, type) => {
-	const valueType = Type.getValueType(value);
+	const valueType = Type.get(value);
 
 	switch (type) {
 		case null: {
