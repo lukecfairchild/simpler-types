@@ -1,10 +1,34 @@
 
+const toString = (value) => {
+	switch (value) {
+		case null:
+		case undefined:
+			return value;
+	}
+
+	switch (typeof value) {
+		case 'symbol':
+		case 'function':
+		case 'boolean':
+			return value;
+		case 'string':
+			return JSON.stringify(value);
+		case 'number':
+			if (isNaN(value)) {
+				return value;
+			}
+
+			return value;
+		case 'object':
+			return JSON.stringify(value);
+	}
+}
+
 const Type = require('../src');
 
 class TestClass {}
 
 var testInstance = new TestClass();
-
 
 let exitCode = 0;
 const values = {
@@ -53,20 +77,20 @@ for (var className in values) {
 	if (className === 'Number') {
 		try {
 			Type.assert(value, NaN);
-			console.log(`\x1b[31mFAILED: NaN !== ${className}: ${value}`);
+			console.log(`\x1b[31mFAILED: NaN !== ${className}: ${toString(value)}`);
 			exitCode = 1;
 
 		} catch (e) {
-			console.log(`\x1b[32mPASSED: NaN !== ${className}: ${value}`);
+			console.log(`\x1b[32mPASSED: NaN !== ${className}: ${toString(value)}`);
 		}
 
 	} else {
 		try {
 			Type.assert(value, NaN);
-			console.log(`\x1b[32mPASSED: NaN === ${className}: ${value}`);
+			console.log(`\x1b[32mPASSED: NaN === ${className}: ${toString(value)}`);
 
 		} catch (e) {
-			console.log(`\x1b[31mFAILED: NaN === ${className}: ${value}`);
+			console.log(`\x1b[31mFAILED: NaN === ${className}: ${toString(value)}`);
 			exitCode = 1;
 		}
 	}
@@ -82,21 +106,21 @@ for (var className in values) {
 		if (className == i) {
 			try {
 				Type.assert(value, ClassType);
-				console.log(`\x1b[32mPASSED: ${className} === ${valueType}: ${value}`);
+				console.log(`\x1b[32mPASSED: ${className} === ${valueType}: ${toString(value)}`);
 
 			} catch (e) {
-				console.log(`\x1b[31mFAILED: ${className} === ${valueType}: ${value}`);
+				console.log(`\x1b[31mFAILED: ${className} === ${valueType}: ${toString(value)}`);
 				exitCode = 1;
 			}
 
 		} else {
 			try {
 				Type.assert(value, ClassType);
-				console.log(`\x1b[31mFAILED: ${className} !== ${valueType}: ${value}`);
+				console.log(`\x1b[31mFAILED: ${className} !== ${valueType}: ${toString(value)}`);
 				exitCode = 1;
 
 			} catch (e) {
-				console.log(`\x1b[32mPASSED: ${className} !== ${valueType}: ${value}`);
+				console.log(`\x1b[32mPASSED: ${className} !== ${valueType}: ${toString(value)}`);
 			}
 		}
 	}

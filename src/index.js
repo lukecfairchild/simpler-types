@@ -1,88 +1,106 @@
 
-const getTypeInfo = (value) => {
+const toString = (value) => {
+	switch (value) {
+		case null:
+		case undefined:
+			return value;
+	}
+
+	switch (typeof value) {
+		case 'symbol':
+		case 'function':
+		case 'boolean':
+			return value;
+		case 'string':
+			return JSON.stringify(value);
+		case 'number':
+			if (isNaN(value)) {
+				return value;
+			}
+
+			return value;
+		case 'object':
+			return JSON.stringify(value);
+	}
+}
+
+const Type = {};
+
+Type.getTypeName = (type) => {
+	if (type === undefined) {
+		return 'undefined';
+	}
+
+	if (type === null) {
+		return 'null';
+	}
+
+	if (typeof type === 'number'
+	&&  isNaN(type)) {
+		return 'NaN';
+	}
+
+	return type.name;
+}
+
+Type.getValueType = (value) => {
 	if (value === undefined) {
-		return {
-			name  :'undefined',
-			value : value
-		};
+		return 'undefined';
 	}
 
 	if (value === null) {
-		return {
-			name  : 'null',
-			value : value
-		};
+		return 'null';
 	}
 
 	if (typeof value === 'number') {
 		if (isNaN(value)) {
-			return {
-				name  : 'NaN',
-				value : value
-			};
+			return 'NaN';
 		}
 
-		return {
-			name  : 'Number',
-			value : value
-		};
+		return 'Number';
 	}
 
 	if (typeof value === 'symbol') {
-		return {
-			name  : 'Symbol',
-			value : value
-		};
+		return 'Symbol';
 	}
 
 	if (typeof value === 'string') {
-		return {
-			name  : 'String',
-			value : JSON.stringify(value)
-		};
+		return 'String';
 	}
 
 	if (typeof value === 'function') {
-		return {
-			name  : 'Function',
-			value : value
-		};
+		return 'Function';
 	}
 
 	if (typeof value === 'boolean') {
-		return {
-			name  : 'Boolean',
-			value : value
-		};
+		return 'Boolean';
 	}
 
 	if (typeof value === 'object'
 	&&  value instanceof Array) {
-		return {
-			name  : 'Array',
-			value : JSON.stringify(value)
-		};
+		return 'Array';
 	}
 
 	if (typeof value === 'object'
 	&&  value instanceof Object) {
-		return {
-			name  : Object(value).constructor.name,
-			value : JSON.stringify(value)
-		};
+		return Object(value).constructor.name;
 	}
 }
 
-const Type = (...args) => {
-	const value = args[0];
-
-	let type = args[1];
-
-	const valueType = getTypeInfo(value).name;
-
-	if (args.length === 1) {
-		return valueType;
+Type.assert = (value, type) => {
+	if (!Type.is(value, type)) {
+		throw new Error(
+			`Incorrect type recieved.\n  expected: ${Type.getTypeName(type)} \n  recieved: ${Type.getValueType(value)}\n  value: ${toString(value)}`
+		);
 	}
+}
+
+Type.get = (value) => {
+	return Type.getValueType(value);
+}
+
+Type.is = (value, type) => {
+	const valueType = Type.getValueType(value);
 
 	switch (type) {
 		case null: {
@@ -112,28 +130,6 @@ const Type = (...args) => {
 	}
 
 	return valueType === type;
-}
-
-Type.assert = (value, type) => {
-	const valueTypeInfo = getTypeInfo(value);
-	const typeInfo      = getTypeInfo(type);
-
-	if (!Type(value, type)) {
-		throw new Error(
-			`Incorrect type recieved.\n  expected: ${typeInfo.name} \n  recieved: ${valueTypeInfo.name}\n  value: ${valueTypeInfo.value}`
-		);
-	}
-}
-
-Type.get = (value) => {
-	return getTypeInfo(value).name;
-}
-
-Type.is = (value, type) => {
-	const valueTypeInfo = getTypeInfo(value);
-	const typeInfo      = getTypeInfo(type);
-
-	return Type(value, type);
 }
 
 
