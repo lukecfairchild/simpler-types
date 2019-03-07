@@ -146,34 +146,6 @@ Type.get = (value) => {
 }
 
 Type.is = (value, type) => {
-	switch (typeof type) {
-		case 'string':
-		case 'boolean': {
-			throw new Error('Invalid type given');
-		}
-		case 'number': {
-			if (!isNaN(type)) {
-				throw new Error('Invalid type given');
-			}
-
-			type = 'NaN';
-
-			break;
-		}
-		case 'function': {
-			if (!type.name) {
-				throw new Error('Invalid type given');
-			}
-
-			type = type.name;
-
-			break;
-		}
-		case 'object': {
-			return Type.iterate(value, type);
-		}
-	}
-
 	switch (type) {
 		case null: {
 			type = 'null';
@@ -183,6 +155,35 @@ Type.is = (value, type) => {
 		case undefined: {
 			type = 'undefined';
 			break;
+		}
+		default: {
+			switch (typeof type) {
+				case 'string':
+				case 'boolean': {
+					throw new Error('Invalid type given');
+				}
+				case 'number': {
+					if (!isNaN(type)) {
+						throw new Error('Invalid type given');
+					}
+
+					type = 'NaN';
+
+					break;
+				}
+				case 'function': {
+					if (!type.name) {
+						throw new Error('Invalid type given');
+					}
+
+					type = type.name;
+
+					break;
+				}
+				case 'object': {
+					return Type.iterate(value, type);
+				}
+			}
 		}
 	}
 
@@ -200,22 +201,25 @@ Type.is = (value, type) => {
 module.exports = Type;
 
 /* temp examples
+
+class Kid {}
+
+var kid1 = new Kid()
+var kid2 = new Kid()
+
+
+
 var input = {
 	name : '',
 	age  : 42,
-	kids : [{
-		i: ''
-	},{
-		i: 1
-	}]
+	kids : [kid1, kid2]
 };
 
 
 Type.assert(input, {
 	name : String,
 	age  : Number,
-	kids : [{
-		i : String
-	}]
+	kids : [Kid]
 });
+
 // */
