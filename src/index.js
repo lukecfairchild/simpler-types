@@ -123,10 +123,14 @@ Type.iterate = (values, types, isAssert) => {
 
 			valueTypes.push(valueType);
 
-			if (!typeTypes.includes(valueType)
-			&&  !typeTypes.includes('NaN')
-			&&  Type.is(value, NaN)) {
-				success = false;
+			if (!typeTypes.includes(valueType)) {
+				if (typeTypes.includes('NaN')) {
+					if (Type.is(value, Number)) {
+						success = false;
+					}
+				} else {
+					success = false;
+				}
 			}
 		}
 
@@ -157,7 +161,9 @@ Type.iterate = (values, types, isAssert) => {
 
 			if (typeof type === 'object'
 			&&  type !== null) {
-				return Type.iterate(value, type, isAssert);
+				 if (!Type.iterate(value, type, isAssert)) {
+				 	return false;
+				 }
 			}
 
 			if (!Type.is(value, type)) {
