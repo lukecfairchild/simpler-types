@@ -74,3 +74,8 @@ Returns true/false based on if input matches the type.
 	Type.is(undefined, undefined); // true
 	Type.is(Symbol('id'), Symbol); // true
 ```
+
+## License
+
+Simple Type Assert is freely distributable under the terms of the [MIT license](https://gitlab.com/lukecfairchild/simple-type-assert/blob/master/LICENSE).
+
