@@ -41,7 +41,57 @@ const getTypeName = (type) => {
 	return type.name;
 }
 
+
 const Type = {};
+
+Type.iterate = (values, types) => {
+	if (typeof types !== 'object') {
+		console.log(typeof types, types)
+		throw new Error('Invalid type given');
+	}
+
+	if (types instanceof Array) {
+		if (!Type.is(values, Array)) {
+			return false;
+		}
+
+		if (!types.length) {
+			return  true;
+		}
+
+		for (let typesIndex in types) {
+			const type = types[typesIndex];
+
+			for(var i = values.length -1; i >= 0 ; i--){
+				const value = values[i];
+
+				if (Type.is(value, type)) {
+					values.splice(i, 1);
+				}
+			}
+		}
+
+		if (values.length) {
+			return false;
+		}
+
+	} else {
+		if (!Type.is(values, Object)) {
+			return false;
+		}
+
+		for (let key in types) {
+			const value = values[key];
+			const type  = types[key];
+
+			if (!Type.is(value, type)) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
 
 Type.assert = (value, type) => {
 	if (!Type.is(value, type)) {
@@ -96,7 +146,33 @@ Type.get = (value) => {
 }
 
 Type.is = (value, type) => {
-	const valueType = Type.get(value);
+	switch (typeof type) {
+		case 'string':
+		case 'boolean': {
+			throw new Error('Invalid type given');
+		}
+		case 'number': {
+			if (!isNaN(type)) {
+				throw new Error('Invalid type given');
+			}
+
+			type = 'NaN';
+
+			break;
+		}
+		case 'function': {
+			if (!type.name) {
+				throw new Error('Invalid type given');
+			}
+
+			type = type.name;
+
+			break;
+		}
+		case 'object': {
+			return Type.iterate(value, type);
+		}
+	}
 
 	switch (type) {
 		case null: {
@@ -108,17 +184,9 @@ Type.is = (value, type) => {
 			type = 'undefined';
 			break;
 		}
-
-		default: {
-			if (typeof type === 'number'
-			&&  isNaN(type)) {
-				type = 'NaN';
-
-			} else {
-				type = type.name;
-			}
-		}
 	}
+
+	const valueType = Type.get(value);
 
 	if (type === 'NaN'
 	&&  valueType !== 'Number') {
@@ -130,3 +198,24 @@ Type.is = (value, type) => {
 
 
 module.exports = Type;
+
+/* temp examples
+var input = {
+	name : '',
+	age  : 42,
+	kids : [{
+		i: ''
+	},{
+		i: 1
+	}]
+};
+
+
+Type.assert(input, {
+	name : String,
+	age  : Number,
+	kids : [{
+		i : String
+	}]
+});
+// */
