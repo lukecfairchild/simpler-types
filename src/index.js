@@ -8,6 +8,7 @@ const toString = (value) => {
 
 	switch (typeof value) {
 		case 'symbol':
+			return value.toString();
 		case 'function':
 		case 'boolean':
 			return value;
@@ -19,8 +20,37 @@ const toString = (value) => {
 			}
 
 			return value;
-		case 'object':
-			return JSON.stringify(value);
+		case 'object': {
+			if (value instanceof Array) {
+				let arrayString = '[';
+
+				for (let i in value) {
+					arrayString += toString(value[i]);
+
+					if (i < value.length - 1) {
+						arrayString += ', ';
+					}
+				}
+
+				return arrayString + ']';
+			}
+
+			let objectSting = '{';
+
+			let i = 0;
+
+			for (let key in value) {
+				objectSting += key + ': ' + toString(value[key]);
+
+				if (Object.keys(value).length - 1 > i) {
+					objectSting += ', ';
+				}
+
+				i++;
+			}
+
+			return objectSting + '}';
+		}
 	}
 }
 
@@ -38,45 +68,86 @@ const getTypeName = (type) => {
 		return 'NaN';
 	}
 
-	return type.name;
+	return type.name || type.constructor.name;
 }
 
 
 const Type = {};
 
-Type.iterate = (values, types) => {
-	if (typeof types !== 'object') {
-		console.log(typeof types, types)
+Type.iterate = (values, types, isAssert) => {
+	/*if (typeof types !== 'object') {
 		throw new Error('Invalid type given');
-	}
+	}*/
 
 	if (types instanceof Array) {
-		if (!Type.is(values, Array)) {
-			return false;
-		}
+		const typeTypes  = [];
+		const valueTypes = [];
 
-		if (!types.length) {
-			return  true;
-		}
+		let success = true;
 
-		for (let typesIndex in types) {
-			const type = types[typesIndex];
+		for (let i in types) {
+			const type     = types[i];
+			const typeName = Type.get(type);
 
-			for(var i = values.length -1; i >= 0 ; i--){
-				const value = values[i];
+			switch (typeName) {
+				case 'Object':
+				case 'Array': {
+					typeTypes.push(typeName);
 
-				if (Type.is(value, type)) {
-					values.splice(i, 1);
+					for (let j in values) {
+						const value     = values[j];
+						const valueType = Type.get(value);
+
+						switch (valueType) {
+							case 'Object':
+							case 'Array': {
+								if (!Type.iterate(value, type, isAssert)) {
+									return false
+								}
+							}
+						}
+					}
+
+					break;
+				}
+
+				default: {
+					typeTypes.push(getTypeName(type));
 				}
 			}
 		}
 
-		if (values.length) {
+		for (let i in values) {
+			const value     = values[i];
+			const valueType = Type.get(value);
+
+			valueTypes.push(valueType);
+
+			if (!typeTypes.includes(valueType)
+			&&  !typeTypes.includes('NaN')
+			&&  Type.is(value, NaN)) {
+				success = false;
+			}
+		}
+
+		if (!success) {
+			if (isAssert) {
+				throw new Error(
+					`1 Incorrect type received.\n  Expected: [${typeTypes.join(', ')}] \n  Received: [${valueTypes.join(', ')}]\n     Value: ${toString(values)}`
+				);
+			}
+
 			return false;
 		}
 
 	} else {
 		if (!Type.is(values, Object)) {
+			if (isAssert) {
+				throw new Error(
+					`3 Incorrect type received.\n  Expected: ${getTypeName(Object)} \n  Received: ${Type.get(values)}\n     Value: ${toString(values)}`
+				);
+			}
+
 			return false;
 		}
 
@@ -84,7 +155,18 @@ Type.iterate = (values, types) => {
 			const value = values[key];
 			const type  = types[key];
 
+			if (typeof type === 'object'
+			&&  type !== null) {
+				return Type.iterate(value, type, isAssert);
+			}
+
 			if (!Type.is(value, type)) {
+				if (isAssert) {
+					throw new Error(
+						`4 Incorrect type received.\n  Expected: ${getTypeName(type)} \n  Received: ${Type.get(value)}\n     Value: ${toString(value)}`
+					);
+				}
+
 				return false;
 			}
 		}
@@ -94,9 +176,9 @@ Type.iterate = (values, types) => {
 }
 
 Type.assert = (value, type) => {
-	if (!Type.is(value, type)) {
+	if (!Type.is(value, type, true)) {
 		throw new Error(
-			`Incorrect type recieved.\n  expected: ${getTypeName(type)} \n  recieved: ${Type.get(value)}\n  value: ${toString(value)}`
+			`Incorrect type received.\n  Expected: ${getTypeName(type)} \n  Received: ${Type.get(value)}\n     Value: ${toString(value)}`
 		);
 	}
 }
@@ -145,7 +227,7 @@ Type.get = (value) => {
 	}
 }
 
-Type.is = (value, type) => {
+Type.is = (value, type, isAssert) => {
 	switch (type) {
 		case null: {
 			type = 'null';
@@ -160,11 +242,11 @@ Type.is = (value, type) => {
 			switch (typeof type) {
 				case 'string':
 				case 'boolean': {
-					throw new Error('Invalid type given');
+					throw new Error('Invalid type given.');
 				}
 				case 'number': {
 					if (!isNaN(type)) {
-						throw new Error('Invalid type given');
+						throw new Error('Invalid type given.');
 					}
 
 					type = 'NaN';
@@ -173,7 +255,7 @@ Type.is = (value, type) => {
 				}
 				case 'function': {
 					if (!type.name) {
-						throw new Error('Invalid type given');
+						throw new Error('Invalid type given.');
 					}
 
 					type = type.name;
@@ -181,7 +263,7 @@ Type.is = (value, type) => {
 					break;
 				}
 				case 'object': {
-					return Type.iterate(value, type);
+					return Type.iterate(value, type, isAssert);
 				}
 			}
 		}
@@ -199,27 +281,3 @@ Type.is = (value, type) => {
 
 
 module.exports = Type;
-
-/* temp examples
-
-class Kid {}
-
-var kid1 = new Kid()
-var kid2 = new Kid()
-
-
-
-var input = {
-	name : '',
-	age  : 42,
-	kids : [kid1, kid2]
-};
-
-
-Type.assert(input, {
-	name : String,
-	age  : Number,
-	kids : [Kid]
-});
-
-// */
