@@ -102,7 +102,7 @@ Type.iterate = (values, types, isAssert) => {
 							case 'Object':
 							case 'Array': {
 								if (!Type.iterate(value, type, isAssert)) {
-									return false
+									return [value]
 								}
 							}
 						}
@@ -135,17 +135,17 @@ Type.iterate = (values, types, isAssert) => {
 		}
 
 		if (!success) {
-			if (isAssert) {
+			/*if (isAssert) {
 				throw new Error(
 					`1 Incorrect type received.\n  Expected: [${typeTypes.join(', ')}] \n  Received: [${valueTypes.join(', ')}]\n     Value: ${toString(values)}`
 				);
-			}
+			}*/
 
-			return false;
+			return toString(values);
 		}
 
 	} else {
-		if (!Type.is(values, Object)) {
+		/*if (!Type.is(values, Object)) {
 			if (isAssert) {
 				throw new Error(
 					`3 Incorrect type received.\n  Expected: ${getTypeName(Object)} \n  Received: ${Type.get(values)}\n     Value: ${toString(values)}`
@@ -153,7 +153,7 @@ Type.iterate = (values, types, isAssert) => {
 			}
 
 			return false;
-		}
+		}*/
 
 		for (let key in types) {
 			const value = values[key];
@@ -162,26 +162,26 @@ Type.iterate = (values, types, isAssert) => {
 			if (typeof type === 'object'
 			&&  type !== null) {
 				 if (!Type.iterate(value, type, isAssert)) {
-				 	return false;
+				 	return value;
 				 }
 			}
 
 			if (!Type.is(value, type)) {
-				if (isAssert) {
+				/*if (isAssert) {
 					throw new Error(
 						`4 Incorrect type received.\n  Expected: ${getTypeName(type)} \n  Received: ${Type.get(value)}\n     Value: ${toString(value)}`
 					);
-				}
+				}*/
 
-				return false;
+				return toString(value);
 			}
 		}
 	}
-
-	return true;
 }
 
 Type.assert = (value, type) => {
+	console.log(Type.is(value, type, true))
+	return
 	if (!Type.is(value, type, true)) {
 		throw new Error(
 			`Incorrect type received.\n  Expected: ${getTypeName(type)} \n  Received: ${Type.get(value)}\n     Value: ${toString(value)}`
@@ -269,7 +269,9 @@ Type.is = (value, type, isAssert) => {
 					break;
 				}
 				case 'object': {
-					return Type.iterate(value, type, isAssert);
+					var x = Type.iterate(value, type, isAssert);
+
+					return x
 				}
 			}
 		}
