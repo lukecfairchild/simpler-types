@@ -75,9 +75,9 @@ const getTypeName = (type) => {
 const Type = {};
 
 Type.iterate = (values, types, isAssert) => {
-	/*if (typeof types !== 'object') {
+	if (typeof types !== 'object') {
 		throw new Error('Invalid type given');
-	}*/
+	}
 
 	if (types instanceof Array) {
 		const typeTypes  = [];

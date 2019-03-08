@@ -31,6 +31,11 @@ var input = {
 				hi   : '',
 				arr  : ['', ''],
 				x    : ''
+			},{
+				fail : '',
+				hi   : '',
+				arr  : ['', '', 1],
+				x    : ''
 			}]
 		}]
 	},
@@ -39,7 +44,7 @@ var input = {
 	kids : [kid1, kid2, 'hi', () => {}]
 };
 
-
+// var x = process.hrtime()
 Type.assert(input, {
 	id : {
 		hi    : Function,
@@ -63,3 +68,8 @@ Type.assert(input, {
 	age  : Number,
 	kids : [NaN]
 });
+
+// var y = process.hrtime()
+// console.log(y[1] - x[1])
+
+
