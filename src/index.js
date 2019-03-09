@@ -33,7 +33,7 @@ const toString = (value) => {
 						arrayString += ', ';
 					}
 				}
-console.log('print', arrayString + ']', value.length)
+
 				return arrayString + ']';
 			}
 
@@ -278,9 +278,7 @@ Type.is = (value, type) => {
 	if (typeof type === 'object'
 	&&  type instanceof Object) {
 		const iterate = Type.iterate(value, type);
-console.log(toString(iterate.data));
-console.log(iterate.expected);
-console.log(iterate.received);
+
 		return !iterate;
 	}
 
