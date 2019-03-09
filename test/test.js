@@ -44,7 +44,7 @@ var input = {
 	kids : [kid1, kid2, 'hi', () => {}]
 };
 
-// var x = process.hrtime()
+var x = process.hrtime()
 Type.assert(input, {
 	id : {
 		hi    : Function,
@@ -69,7 +69,7 @@ Type.assert(input, {
 	kids : [NaN]
 });
 
-// var y = process.hrtime()
-// console.log(y[1] - x[1])
+var y = process.hrtime()
+// console.log((y[1] - x[1]) / 1000000)
 
 
