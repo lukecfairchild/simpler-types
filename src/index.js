@@ -133,10 +133,12 @@ const isType = (value, type) => {
 
 Type.getType = getValueType;
 
-Type.iterate = (values, types) => {
+Type.iterate = (values, types, indent) => {
 	if (typeof types !== 'object') {
 		return;
 	}
+
+	indent = indent || 0;
 
 	if (types instanceof Array) {
 
@@ -202,7 +204,7 @@ Type.iterate = (values, types) => {
 			switch (valueType) {
 				case Object:
 				case Array: {
-					const iterate = Type.iterate(value, types[0]);
+					const iterate = Type.iterate(value, types[0], indent);
 
 					if (iterate) {
 						const data = new Array(i);
@@ -227,13 +229,13 @@ Type.iterate = (values, types) => {
 			switch (typeName) {
 				case 'Object':
 				case 'Array': {
-					const iterate = Type.iterate(value, type);
+					const iterate = Type.iterate(value, type, indent + 1);
 
 					if (iterate) {
 						return {
 							expected : iterate.expected,
 							received : iterate.received,
-							data     : `{${key}: ${iterate.data}}`
+							data     : `{\n${'    '.repeat(indent + 1)}${key}: ${iterate.data}\n${'    '.repeat(indent)}}`
 						};
 					}
 				}
@@ -245,7 +247,7 @@ Type.iterate = (values, types) => {
 				return {
 					expected : getTypeName(type),
 					received : valueType,
-					data     : `{${key}: \x1b[41m${toString(value)}\x1b[0m}`
+					data     : `{\n${'    '.repeat(indent + 1)}${key}: \x1b[41m${toString(value)}\x1b[0m\n${'    '.repeat(indent)}}`
 				};
 			}
 		}
