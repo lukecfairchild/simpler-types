@@ -23,24 +23,24 @@ var input = {
 		hi1: kid2,
 		hi2: Symbol('hi'),
 		hi3: Kid,
-		array: ['hi','', {
+		array: [{
 			test: false,
 			fail: true,
 			fourth: [{
 				fail : '1',
-				hi2   : '1',
-				arr  : ['1', '1'],
+				hi2  : '1',
+				arr  : ['1', '1', 8],
 				x    : '1'
 			},{
 				fail : '2',
-				hi2   : '2',
-				arr  : ['2', '2', 2],
+				hi2  : '2',
+				arr  : ['2', '2'],
 				x    : '2'
 			}]
 		}]
 	},
 	name : 'name string',
-	age  : '',
+	age  : 42,
 	kids : [kid1, kid2, 'hi', () => {}]
 };
 
@@ -53,7 +53,7 @@ Type.assert(input, {
 		hi1   : Kid,
 		hi2   : Symbol,
 		hi3   : Function,
-		array : [String, {
+		array : [{
 			test   : Boolean,
 			fail   : Boolean,
 			fourth : [{

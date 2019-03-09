@@ -55,7 +55,49 @@ const toString = (value) => {
 		}
 	}
 }
+const getValueType = (value) => {
+	if (value === undefined) {
+		return undefined;
+	}
 
+	if (value === null) {
+		return null;
+	}
+
+	if (typeof value === 'number') {
+		if (isNaN(value)) {
+			return NaN;
+		}
+
+		return Number;
+	}
+
+	if (typeof value === 'symbol') {
+		return Symbol;
+	}
+
+	if (typeof value === 'string') {
+		return String;
+	}
+
+	if (typeof value === 'function') {
+		return Function;
+	}
+
+	if (typeof value === 'boolean') {
+		return Boolean;
+	}
+
+	if (typeof value === 'object'
+	&&  value instanceof Array) {
+		return Array;
+	}
+
+	if (typeof value === 'object'
+	&&  value instanceof Object) {
+		return Object(value).constructor;
+	}
+}
 const getTypeName = (type) => {
 	if (type === undefined) {
 		return 'undefined';
@@ -70,12 +112,15 @@ const getTypeName = (type) => {
 		return 'NaN';
 	}
 
-	return type.name || type.constructor.name;
+	if (typeof type === 'function'
+	&&  type.name) {
+		return type.name;
+	}
+
+	return type.constructor.name;
 }
-
 const isType = (value, type) => {
-	const typeName = getTypeName(type);
-
+	const typeName  = getTypeName(type);
 	const valueType = Type.get(value);
 
 	if (typeName === 'NaN'
@@ -86,14 +131,16 @@ const isType = (value, type) => {
 	return valueType === typeName;
 }
 
+Type.getType = getValueType;
+
 Type.iterate = (values, types) => {
 	if (typeof types !== 'object') {
 		throw new Error('Invalid type given');
 	}
 
 	if (types instanceof Array) {
-		const typeNames  = [];
-		const valueTypes = [];
+		// Convert Types to nameTypes
+		const typeNames = [];
 
 		for (let i in types) {
 			const type     = types[i];
@@ -103,102 +150,83 @@ Type.iterate = (values, types) => {
 				case 'Object':
 				case 'Array': {
 					typeNames.push(typeName);
-
 					break;
 				}
-
 				default: {
 					typeNames.push(getTypeName(type));
 				}
 			}
 		}
 
-		for (let i in values) {
-			const value     = values[i];
-			const valueType = Type.get(value);
+		for (let i = values.length -1; i >= 0 ; i--){
+			const value         = values[i];
+			const valueTypeName = Type.get(value);
+			const valueType     = getValueType(value);
 
-			valueTypes.push(valueType);
-
-			if ((valueType === 'Object'
-			&&   typeNames.includes('Object'))
-			||  (valueType === 'Array'
-			&&   typeNames.includes('Array'))) {
-				let returns;
-
-				for (let j in types) {
-					const type = types[j];
-					const typeName = getTypeName(type);
-
-					switch (typeName) {
-						case 'Object':
-						case 'Array': {
-							returns = [Type.iterate(value, type)];
-
-							break;
-						}
-
-						default: {
-							if (typeName !== valueType) {
-
-								returns = [value];
-							}
-						}
-					}
-
-					if (!returns) {
-						returns = undefined;
-						break;
-					}
-				}
-console.log('return 1', values)
-				return returns;
-			}
-
-			if (!typeNames.includes(valueType)) {
-				if (typeNames.includes('NaN')) {
+			if (!typeNames.includes(valueTypeName)) {
+				if (types.includes(NaN)) {
 					if (valueType === Number) {
-console.log('return 2', values)
 						return [value];
 					}
 
 				} else {
-console.log('return 3', values)
 					return [value];
+				}
+			}
+
+			switch (valueType) {
+				case Object:
+				case Array: {
+					const returns = Type.iterate(value, types[0]);
+
+					if (returns) {
+						return [returns];
+					}
 				}
 			}
 		}
 
 	} else {
 		for (let key in types) {
-			const value    = values[key];
-			const type     = types[key];
-			const typeName = getTypeName(type)
-			const returns  = {};
-
-			returns[key] = value;
+			const value      = values[key];
+			const type       = types[key];
+			const typeName   = getTypeName(type)
+			const returnsObj = {};
 
 			switch (typeName) {
 				case 'Object':
 				case 'Array': {
-					returns[key] = Type.iterate(value, type);
-console.log('return 4', returns)
-					return returns;
-					break;
+					returns = Type.iterate(value, type);
+					if (returns) {
+						returnsObj[key] = returns;
+console.log(4, returns)
+						return returnsObj;
+						break;
+					}
 				}
 			}
 
-			if (Type.get(value) !== getTypeName(type)) {
-console.log('return 5', values)
-				return returns;
+			if (!isType(value, type)) {
+				returnsObj[key] = value;
+console.log(5, returnsObj)
+				return returnsObj;
 			}
 		}
 	}
 }
 
 Type.assert = (value, type) => {
-	console.log(Type.is(value, type, true))
-	return
-	if (!Type.is(value, type, true)) {
+	if (typeof type === 'object'
+	&&  type instanceof Object) {
+		const returns = Type.iterate(value, type);
+
+		if (returns) {
+			throw new Error(
+				`Incorrect type received.\n  Expected: ${getTypeName(type)} \n  Received: ${Type.get(value)}\n     Value: ${toString(returns)}`
+			);
+		}
+
+	} else if (!Type.is(value, type, true)) {
 		throw new Error(
 			`Incorrect type received.\n  Expected: ${getTypeName(type)} \n  Received: ${Type.get(value)}\n     Value: ${toString(value)}`
 		);
@@ -206,67 +234,18 @@ Type.assert = (value, type) => {
 }
 
 Type.get = (value) => {
-	if (value === undefined) {
-		return 'undefined';
-	}
-
-	if (value === null) {
-		return 'null';
-	}
-
-	if (typeof value === 'number') {
-		if (isNaN(value)) {
-			return 'NaN';
-		}
-
-		return 'Number';
-	}
-
-	if (typeof value === 'symbol') {
-		return 'Symbol';
-	}
-
-	if (typeof value === 'string') {
-		return 'String';
-	}
-
-	if (typeof value === 'function') {
-		return 'Function';
-	}
-
-	if (typeof value === 'boolean') {
-		return 'Boolean';
-	}
-
-	if (typeof value === 'object'
-	&&  value instanceof Array) {
-		return 'Array';
-	}
-
-	if (typeof value === 'object'
-	&&  value instanceof Object) {
-		return Object(value).constructor.name;
-	}
+	return getTypeName(getValueType(value))
 }
 
 Type.is = (value, type) => {
-	const typeName = getTypeName(type);
-
-	switch (typeName) {
-		case 'Array':
-		case 'Object': {
-			const returns = Type.iterate(value, type);
-		}
+	if (typeof type === 'object'
+	&&  type instanceof Object) {
+		const returns = Type.iterate(value, type);
+console.log(toString(returns));
+		return !returns;
 	}
 
-	const valueType = Type.get(value);
-
-	if (type === 'NaN'
-	&&  valueType !== 'Number') {
-		return true;
-	}
-
-	return valueType === type;
+	return isType(value, type);
 }
 
 
