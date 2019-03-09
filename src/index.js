@@ -26,14 +26,14 @@ const toString = (value) => {
 			if (value instanceof Array) {
 				let arrayString = '[';
 
-				for (let i in value) {
+				for (let i = 0; i < value.length; i++) {
 					arrayString += toString(value[i]);
 
 					if (i < value.length - 1) {
 						arrayString += ', ';
 					}
 				}
-
+console.log('print', arrayString + ']', value.length)
 				return arrayString + ']';
 			}
 
@@ -139,6 +139,8 @@ Type.iterate = (values, types) => {
 	}
 
 	if (types instanceof Array) {
+
+		// Only 1 type is supported per array
 		if (types.length > 1) {
 			const typesNames = [];
 
@@ -174,18 +176,25 @@ Type.iterate = (values, types) => {
 			if (!typeNames.includes(valueTypeName)) {
 				if (types.includes(NaN)) {
 					if (valueType === Number) {
+						const data = new Array(i);
+						data.push(`\x1b[41m${toString(value)}\x1b[0m`);
+
 						return {
 							expected : 'NaN',
 							received : 'Number',
-							data     : [value]
+							data     : `[${data.join(', ')}]`
 						};
 					}
 
 				} else {
+					const data = new Array(i);
+
+					data.push(`\x1b[41m${toString(value)}\x1b[0m`);
+
 					return {
 						expected : `${typeNames.join(' || ')}`,
 						received : valueTypeName,
-						data     : [value]
+						data     : `[${data.join(', ')}]`
 					};
 				}
 			}
@@ -196,10 +205,13 @@ Type.iterate = (values, types) => {
 					const iterate = Type.iterate(value, types[0]);
 
 					if (iterate) {
+						const data = new Array(i);
+						data.push(iterate.data);
+
 						return {
 							expected : iterate.expected,
 							received : iterate.received,
-							data     : [iterate.data]
+							data     : `[${data.join(', ')}]`
 						};
 					}
 				}
@@ -221,9 +233,7 @@ Type.iterate = (values, types) => {
 						return {
 							expected : iterate.expected,
 							received : iterate.received,
-							data     : {
-								[key] : iterate.data
-							}
+							data     : `{${key}: ${iterate.data}}`
 						};
 					}
 				}
@@ -235,9 +245,7 @@ Type.iterate = (values, types) => {
 				return {
 					expected : getTypeName(type),
 					received : valueType,
-					data     : {
-						[key] : value
-					}
+					data     : `{${key}: \x1b[41m${toString(value)}\x1b[0m}`
 				};
 			}
 		}
@@ -251,7 +259,7 @@ Type.assert = (value, type) => {
 
 		if (iterate) {
 			throw new Error(
-				`Incorrect type received.\n  Expected: ${iterate.expected} \n  Received: ${iterate.received}\n     Value: ${toString(iterate.data)}`
+				`Incorrect type received.\n  Expected: ${iterate.expected} \n  Received: ${iterate.received}\n     Value: ${iterate.data}`
 			);
 		}
 
