@@ -29,7 +29,7 @@ var input = {
 			fourth: [{
 				fail : '1',
 				hi2  : '1',
-				arr  : ['1', '1', 8],
+				arr  : ['1', '1'],
 				x    : '1'
 			},{
 				fail : '2',

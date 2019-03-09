@@ -135,10 +135,18 @@ Type.getType = getValueType;
 
 Type.iterate = (values, types) => {
 	if (typeof types !== 'object') {
-		throw new Error('Invalid type given');
+		return;
 	}
 
 	if (types instanceof Array) {
+		if (types.length > 1) {
+			const typesNames = [];
+
+			types.forEach(type => typesNames.push(getTypeName(type)));
+
+			throw new Error(`You can only specify 1 type per array: [${typesNames.join(', ')}]`);
+		}
+
 		// Convert Types to nameTypes
 		const typeNames = [];
 
@@ -166,21 +174,33 @@ Type.iterate = (values, types) => {
 			if (!typeNames.includes(valueTypeName)) {
 				if (types.includes(NaN)) {
 					if (valueType === Number) {
-						return [value];
+						return {
+							expected : 'NaN',
+							received : 'Number',
+							data     : [value]
+						};
 					}
 
 				} else {
-					return [value];
+					return {
+						expected : `${typeNames.join(' || ')}`,
+						received : valueTypeName,
+						data     : [value]
+					};
 				}
 			}
 
 			switch (valueType) {
 				case Object:
 				case Array: {
-					const returns = Type.iterate(value, types[0]);
+					const iterate = Type.iterate(value, types[0]);
 
-					if (returns) {
-						return [returns];
+					if (iterate) {
+						return {
+							expected : iterate.expected,
+							received : iterate.received,
+							data     : [iterate.data]
+						};
 					}
 				}
 			}
@@ -191,25 +211,34 @@ Type.iterate = (values, types) => {
 			const value      = values[key];
 			const type       = types[key];
 			const typeName   = getTypeName(type)
-			const returnsObj = {};
 
 			switch (typeName) {
 				case 'Object':
 				case 'Array': {
-					returns = Type.iterate(value, type);
-					if (returns) {
-						returnsObj[key] = returns;
-console.log(4, returns)
-						return returnsObj;
-						break;
+					const iterate = Type.iterate(value, type);
+
+					if (iterate) {
+						return {
+							expected : iterate.expected,
+							received : iterate.received,
+							data     : {
+								[key] : iterate.data
+							}
+						};
 					}
 				}
 			}
 
 			if (!isType(value, type)) {
-				returnsObj[key] = value;
-console.log(5, returnsObj)
-				return returnsObj;
+				const valueType = Type.get(value);
+
+				return {
+					expected : getTypeName(type),
+					received : valueType,
+					data     : {
+						[key] : value
+					}
+				};
 			}
 		}
 	}
@@ -218,11 +247,11 @@ console.log(5, returnsObj)
 Type.assert = (value, type) => {
 	if (typeof type === 'object'
 	&&  type instanceof Object) {
-		const returns = Type.iterate(value, type);
+		const iterate = Type.iterate(value, type);
 
-		if (returns) {
+		if (iterate) {
 			throw new Error(
-				`Incorrect type received.\n  Expected: ${getTypeName(type)} \n  Received: ${Type.get(value)}\n     Value: ${toString(returns)}`
+				`Incorrect type received.\n  Expected: ${iterate.expected} \n  Received: ${iterate.received}\n     Value: ${toString(iterate.data)}`
 			);
 		}
 
@@ -240,9 +269,11 @@ Type.get = (value) => {
 Type.is = (value, type) => {
 	if (typeof type === 'object'
 	&&  type instanceof Object) {
-		const returns = Type.iterate(value, type);
-console.log(toString(returns));
-		return !returns;
+		const iterate = Type.iterate(value, type);
+console.log(toString(iterate.data));
+console.log(iterate.expected);
+console.log(iterate.received);
+		return !iterate;
 	}
 
 	return isType(value, type);
