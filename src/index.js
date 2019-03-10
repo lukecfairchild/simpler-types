@@ -141,6 +141,7 @@ Type.iterate = (values, types, indent) => {
 	indent = indent || 0;
 
 	if (types instanceof Array) {
+		let returns;
 
 		// Only 1 type is supported per array
 		if (types.length > 1) {
@@ -148,7 +149,14 @@ Type.iterate = (values, types, indent) => {
 
 			types.forEach(type => typesNames.push(getTypeName(type)));
 
-			throw new Error(`You can only specify 1 type per array: [${typesNames.join(', ')}]`);
+			return {
+				expected : '1 Type in array.',
+				received : `${types.length} Type's in array.`,
+				data     : `[${typesNames.join(', ')}]`,
+				meta     : {
+					type : 'exception'
+				}
+			}
 		}
 
 		// Convert Types to nameTypes
@@ -213,12 +221,15 @@ Type.iterate = (values, types, indent) => {
 						return {
 							expected : iterate.expected,
 							received : iterate.received,
-							data     : `[${data.join(', ')}]`
+							data     : `[${data.join(', ')}]`,
+							meta     : iterate.meta
 						};
 					}
 				}
 			}
 		}
+
+		return returns;
 
 	} else {
 		for (let key in types) {
@@ -232,10 +243,13 @@ Type.iterate = (values, types, indent) => {
 					const iterate = Type.iterate(value, type, indent + 1);
 
 					if (iterate) {
+						const data = `{\n${'    '.repeat(indent + 1)}${key}: ${iterate.data}\n${'    '.repeat(indent)}}`;
+
 						return {
 							expected : iterate.expected,
 							received : iterate.received,
-							data     : `{\n${'    '.repeat(indent + 1)}${key}: ${iterate.data}\n${'    '.repeat(indent)}}`
+							data     : data,
+							meta     : iterate.meta
 						};
 					}
 				}
@@ -243,11 +257,12 @@ Type.iterate = (values, types, indent) => {
 
 			if (!isType(value, type)) {
 				const valueType = Type.get(value);
+				const data      = `{\n${'    '.repeat(indent + 1)}${key}: \x1b[41m${toString(value)}\x1b[0m\n${'    '.repeat(indent)}}`;
 
 				return {
 					expected : getTypeName(type),
 					received : valueType,
-					data     : `{\n${'    '.repeat(indent + 1)}${key}: \x1b[41m${toString(value)}\x1b[0m\n${'    '.repeat(indent)}}`
+					data     : data
 				};
 			}
 		}
@@ -280,6 +295,14 @@ Type.is = (value, type) => {
 	if (typeof type === 'object'
 	&&  type instanceof Object) {
 		const iterate = Type.iterate(value, type);
+
+		if (iterate
+		&&  iterate.meta
+		&&  iterate.meta.type === 'exception') {
+			throw new Error(
+				`Incorrect type received.\n  Expected: ${iterate.expected} \n  Received: ${iterate.received}\n     Value: ${iterate.data}`
+			);
+		}
 
 		return !iterate;
 	}
