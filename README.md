@@ -16,7 +16,7 @@ Throws an exception anytime the input does not match the type.
 ```
 
 ### Type.get()
-Returns the type of any provided variable.
+Returns the name of the type provided.
 ``` javascript
 	Type.get(input);
 ```
