@@ -152,9 +152,11 @@ Type.iterate = (values, types, indent) => {
 			return {
 				expected : '1 Type in array.',
 				received : `${types.length} Type's in array.`,
-				data     : `[${typesNames.join(', ')}]`,
+				data     : `\x1b[41m[${typesNames.join(', ')}]\x1b[0m`,
 				meta     : {
-					type : 'exception'
+					type    : 'exception',
+					message : 'You can only have 1 Type per array'
+
 				}
 			}
 		}
@@ -275,8 +277,15 @@ Type.assert = (value, type) => {
 		const iterate = Type.iterate(value, type);
 
 		if (iterate) {
+			let message = 'Incorrect type received.';
+
+			if (iterate.meta
+			&&  iterate.meta.message) {
+				message = iterate.meta.message;
+			}
+
 			throw new Error(
-				`Incorrect type received.\n  Expected: ${iterate.expected} \n  Received: ${iterate.received}\n     Value: ${iterate.data}`
+				`${message}\n  Expected: ${iterate.expected} \n  Received: ${iterate.received}\n     Value: ${iterate.data}`
 			);
 		}
 
@@ -299,8 +308,15 @@ Type.is = (value, type) => {
 		if (iterate
 		&&  iterate.meta
 		&&  iterate.meta.type === 'exception') {
+			let message = 'Incorrect type received.';
+
+			if (iterate.meta
+			&&  iterate.meta.message) {
+				message = iterate.meta.message;
+			}
+
 			throw new Error(
-				`Incorrect type received.\n  Expected: ${iterate.expected} \n  Received: ${iterate.received}\n     Value: ${iterate.data}`
+				`${message}\n  Expected: ${iterate.expected} \n  Received: ${iterate.received}\n     Value: ${iterate.data}`
 			);
 		}
 

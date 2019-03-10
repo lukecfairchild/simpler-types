@@ -45,7 +45,7 @@ var input = {
 };
 
 var x = process.hrtime()
-Type.assert(input, {
+Type.is(input, {
 	id : {
 		hi    : Function,
 		what  : null,
