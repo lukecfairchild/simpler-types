@@ -36,17 +36,17 @@ Returns true/false based on if input matches the type.
 
 	const myInstance = new MyClass();
 
-	Type.get(myInstance); // MyClass
-	Type.get(0); // Number
-	Type.get(''); // String
-	Type.get(false); // Boolean
-	Type.get(() => {}); // Function
-	Type.get([]); // Array
-	Type.get({}); // Object
-	Type.get(NaN); // NaN
-	Type.get(null); // null
-	Type.get(undefined); // undefined
-	Type.get(Symbol('id')); // Symbol
+	Type.get(myInstance); // "MyClass"
+	Type.get(0); // "Number"
+	Type.get(''); // "String"
+	Type.get(false); // "Boolean"
+	Type.get(() => {}); // "Function"
+	Type.get([]); // "Array"
+	Type.get({}); // "Object"
+	Type.get(NaN); // "NaN"
+	Type.get(null); // "null"
+	Type.get(undefined); // "undefined"
+	Type.get(Symbol('id')); // "Symbol"
 
 	Type.assert(myInstance, MyClass);
 	Type.assert(0, Number);
