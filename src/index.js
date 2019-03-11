@@ -130,10 +130,7 @@ const isType = (value, type) => {
 
 	return valueType === typeName;
 }
-
-Type.getType = getValueType;
-
-Type.iterate = (values, types, indent) => {
+const iterate = (values, types, indent) => {
 	if (typeof types !== 'object') {
 		return;
 	}
@@ -214,17 +211,17 @@ Type.iterate = (values, types, indent) => {
 			switch (valueType) {
 				case Object:
 				case Array: {
-					const iterate = Type.iterate(value, types[0], indent);
+					const result = iterate(value, types[0], indent);
 
-					if (iterate) {
+					if (result) {
 						const data = new Array(i);
-						data.push(iterate.data);
+						data.push(result.data);
 
 						return {
-							expected : iterate.expected,
-							received : iterate.received,
+							expected : result.expected,
+							received : result.received,
 							data     : `[${data.join(', ')}]`,
-							meta     : iterate.meta
+							meta     : result.meta
 						};
 					}
 				}
@@ -242,16 +239,16 @@ Type.iterate = (values, types, indent) => {
 			switch (typeName) {
 				case 'Object':
 				case 'Array': {
-					const iterate = Type.iterate(value, type, indent + 1);
+					const result = iterate(value, type, indent + 1);
 
-					if (iterate) {
-						const data = `{\n${'    '.repeat(indent + 1)}${key}: ${iterate.data}\n${'    '.repeat(indent)}}`;
+					if (result) {
+						const data = `{\n${'    '.repeat(indent + 1)}${key}: ${result.data}\n${'    '.repeat(indent)}}`;
 
 						return {
-							expected : iterate.expected,
-							received : iterate.received,
+							expected : result.expected,
+							received : result.received,
 							data     : data,
-							meta     : iterate.meta
+							meta     : result.meta
 						};
 					}
 				}
@@ -274,18 +271,18 @@ Type.iterate = (values, types, indent) => {
 Type.assert = (value, type) => {
 	if (typeof type === 'object'
 	&&  type instanceof Object) {
-		const iterate = Type.iterate(value, type);
+		const result = iterate(value, type);
 
-		if (iterate) {
+		if (result) {
 			let message = 'Incorrect type received.';
 
-			if (iterate.meta
-			&&  iterate.meta.message) {
-				message = iterate.meta.message;
+			if (result.meta
+			&&  result.meta.message) {
+				message = result.meta.message;
 			}
 
 			throw new Error(
-				`${message}\n  Expected: ${iterate.expected} \n  Received: ${iterate.received}\n     Value: ${iterate.data}`
+				`${message}\n  Expected: ${result.expected} \n  Received: ${result.received}\n     Value: ${result.data}`
 			);
 		}
 
@@ -303,24 +300,24 @@ Type.get = (value) => {
 Type.is = (value, type) => {
 	if (typeof type === 'object'
 	&&  type instanceof Object) {
-		const iterate = Type.iterate(value, type);
+		const result = iterate(value, type);
 
-		if (iterate
-		&&  iterate.meta
-		&&  iterate.meta.type === 'exception') {
+		if (result
+		&&  result.meta
+		&&  result.meta.type === 'exception') {
 			let message = 'Incorrect type received.';
 
-			if (iterate.meta
-			&&  iterate.meta.message) {
-				message = iterate.meta.message;
+			if (result.meta
+			&&  result.meta.message) {
+				message = result.meta.message;
 			}
 
 			throw new Error(
-				`${message}\n  Expected: ${iterate.expected} \n  Received: ${iterate.received}\n     Value: ${iterate.data}`
+				`${message}\n  Expected: ${result.expected} \n  Received: ${result.received}\n     Value: ${result.data}`
 			);
 		}
 
-		return !iterate;
+		return !result;
 	}
 
 	return isType(value, type);
