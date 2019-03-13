@@ -269,7 +269,6 @@ const iterate = (values, types, indent) => {
 }
 
 
-Type.getType = getValueType;
 Type.assert = (value, type) => {
 	if (typeof type === 'object'
 	&&  type instanceof Object) {
@@ -297,6 +296,7 @@ Type.assert = (value, type) => {
 Type.get = (value) => {
 	return getTypeName(getValueType(value))
 }
+Type.getType = getValueType;
 Type.is = (value, type) => {
 	if (typeof type === 'object'
 	&&  type instanceof Object) {
