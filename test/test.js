@@ -24,13 +24,13 @@ var input = {
 		hi1: kid2,
 		hi2: Symbol('hi'),
 		hi3: Kid,
-		array: [{
+		array: ['hi','', {
 			test: false,
 			fail: true,
 			fourth: [{
 				fail : '1',
 				hi2  : '1',
-				arr  : ['1'],
+				arr  : ['1', '1'],
 				x    : '1'
 			},{
 				fail : '2',
