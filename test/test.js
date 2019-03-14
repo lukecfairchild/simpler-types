@@ -174,6 +174,149 @@ const testObjectsArray = [
 				computer: Array
 			}
 		]
+	},
+	{
+		consoleLog: console.log("Test 4 - Testing error message for String Type"),
+		testObjectData: [
+			{
+				string: 1
+			}
+		],
+		testObjectTypes: [
+			{
+				string: String
+			}
+		]
+	},
+	{
+		consoleLog: console.log("Test 5 - Testing error message for Number Type"),
+		testObjectData: [
+			{
+				number: "Justin"
+			}
+		],
+		testObjectTypes: [
+			{
+				number: Number
+			}
+		]
+	},
+	{
+		consoleLog: console.log("Test 6 - Testing error message for Boolean Type"),
+		testObjectData: [
+			{
+				boolean: "Justin"
+			}
+		],
+		testObjectTypes: [
+			{
+				boolean: Boolean
+			}
+		]
+	},
+	{
+		consoleLog: console.log("Test 7 - Testing error message for Function Type"),
+		testObjectData: [
+			{
+				function: "Justin"
+			}
+		],
+		testObjectTypes: [
+			{
+				function: Function
+			}
+		]
+	},
+	{
+		consoleLog: console.log("Test 8 - Testing error message for Symbol Type"),
+		testObjectData: [
+			{
+				number: "Justin"
+			}
+		],
+		testObjectTypes: [
+			{
+				number: Symbol
+			}
+		]
+	},
+	{
+		consoleLog: console.log("Test 9 - Testing error message for Class Type"),
+		testObjectData: [
+			{
+				number: "Justin"
+			}
+		],
+		testObjectTypes: [
+			{
+				number: Kid
+			}
+		]
+	},
+	{
+		consoleLog: console.log("Test 10 - Testing error message for Object Type"),
+		testObjectData: [
+			{
+				number: "Justin"
+			}
+		],
+		testObjectTypes: [
+			{
+				number: Object
+			}
+		]
+	},
+	{
+		consoleLog: console.log("Test 11 - Testing error message for Array Type"),
+		testObjectData: [
+			{
+				number: "Justin"
+			}
+		],
+		testObjectTypes: [
+			{
+				number: Array
+			}
+		]
+	},
+	{
+		consoleLog: console.log("Test 12 - Testing error message for NaN Type"),
+		testObjectData: [
+			{
+				number: "Justin"
+			}
+		],
+		testObjectTypes: [
+			{
+				number: NaN
+			}
+		]
+	},
+	{
+		consoleLog: console.log("Test 5 - Testing error message for Number Type"),
+		testObjectData: [
+			{
+				number: "Justin"
+			}
+		],
+		testObjectTypes: [
+			{
+				number: undefined
+			}
+		]
+	},
+	{
+		consoleLog: console.log("Test 5 - Testing error message for Number Type"),
+		testObjectData: [
+			{
+				number: "Justin"
+			}
+		],
+		testObjectTypes: [
+			{
+				number: null
+			}
+		]
 	}
 ]
 testObjectsArray.map(test => {
