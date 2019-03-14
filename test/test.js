@@ -45,6 +45,7 @@ var input = {
 	kids : [kid1, kid2, 'hi', () => {}]
 };
 
+var x = process.hrtime()
 Type.assert(input, {
 	id : {
 		hi    : Function,
