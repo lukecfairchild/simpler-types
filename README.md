@@ -7,10 +7,12 @@ A simplified way of verifying variable types.
 ``` bash
 	$ npm install simple-type-assert
 ```
+## Whats new?
+1.1.1 - We added the ability for the "assert" and "is" functions to accept and check multi-layered objects and arrays for types. See the "Layered Checks" section down below for examples.
 
 ## Methods
 ### Type.assert()
-Throws an exception anytime the input does not match the type.
+Throws an exception anytime the input does not match the type. The input and type can objects or arrays with embedded types within them or a single type.
 ``` javascript
 	Type.assert(input, type);
 ```
@@ -22,7 +24,7 @@ Returns the name of the type provided.
 ```
 
 ### Type.is()
-Returns true/false based on if input matches the type.
+Returns true/false based on if input matches the type. The input and type can objects or arrays with embedded types within them or a single type.
 ``` javascript
 	Type.is(input, type);
 ```
