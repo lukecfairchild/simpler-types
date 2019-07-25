@@ -75,6 +75,31 @@ Returns true/false based on if input matches the type.
 	Type.is(Symbol('id'), Symbol); // true
 ```
 
+### Layered Checks
+``` javascript
+Type.assert(input, {
+	name : String,
+	age  : Number,
+	address : {
+		street  : String,
+		zipcode : Number,
+		state   : String,
+		country : String
+	}
+});
+
+Type.is(input, {
+	name : String,
+	age  : Number,
+	address : {
+		street  : String,
+		zipcode : Number,
+		state   : String,
+		country : String
+	}
+});
+```
+
 ## License
 
 Simple Type Assert is freely distributable under the terms of the [MIT license](https://gitlab.com/lukecfairchild/simple-type-assert/blob/master/LICENSE).

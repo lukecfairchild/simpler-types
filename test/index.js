@@ -156,4 +156,13 @@ for (var className in values) {
 	}
 }
 
+try {
+	require('./layeredCheck.js');
+	console.log(`\x1b[32mPASSED: Layered Check`);
+
+} catch (e) {
+	console.log(`\x1b[31mFAILED: Layered Check`);
+	exitCode = 1;
+}
+
 process.exit(exitCode);
