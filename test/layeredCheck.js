@@ -1,19 +1,9 @@
 const Type = require('../src');
 
-
-class Kid {
-	constructor () {
-		this.hi = 'hello';
-	}
-	hi () {
-		console.log('hi');
-	}
-}
+class Kid {}
 
 var kid1 = new Kid()
 var kid2 = new Kid()
-
-
 
 var input = {
 	id : {
@@ -23,7 +13,7 @@ var input = {
 		hi1: kid2,
 		hi2: Symbol('hi'),
 		hi3: Kid,
-		array: ['hi','', {
+		array: [{
 			test: false,
 			fail: true,
 			fourth: [{
@@ -44,7 +34,7 @@ var input = {
 	kids : [kid1, kid2, 'hi', () => {}]
 };
 
-// var x = process.hrtime()
+var x = process.hrtime()
 Type.assert(input, {
 	id : {
 		hi    : Function,
@@ -53,7 +43,7 @@ Type.assert(input, {
 		hi1   : Kid,
 		hi2   : Symbol,
 		hi3   : Function,
-		array : [String, {
+		array : [{
 			test   : Boolean,
 			fail   : Boolean,
 			fourth : [{
@@ -68,8 +58,3 @@ Type.assert(input, {
 	age  : Number,
 	kids : [NaN]
 });
-
-// var y = process.hrtime()
-// console.log(y[1] - x[1])
-
-

@@ -8,6 +8,7 @@ const toString = (value) => {
 
 	switch (typeof value) {
 		case 'symbol':
+			return value.toString();
 		case 'function':
 		case 'boolean':
 			return value;
@@ -19,8 +20,37 @@ const toString = (value) => {
 			}
 
 			return value;
-		case 'object':
-			return JSON.stringify(value);
+		case 'object': {
+			if (value instanceof Array) {
+				let arrayString = '[';
+
+				for (let i = 0; i < value.length; i++) {
+					arrayString += toString(value[i]);
+
+					if (i < value.length - 1) {
+						arrayString += ', ';
+					}
+				}
+
+				return arrayString + ']';
+			}
+
+			let objectSting = '{';
+
+			let i = 0;
+
+			for (let key in value) {
+				objectSting += key + ': ' + toString(value[key]);
+
+				if (Object.keys(value).length - 1 > i) {
+					objectSting += ', ';
+				}
+
+				i++;
+			}
+
+			return objectSting + '}';
+		}
 	}
 }
 
@@ -124,6 +154,15 @@ for (var className in values) {
 			}
 		}
 	}
+}
+
+try {
+	require('./layeredCheck.js');
+	console.log(`\x1b[32mPASSED: Layered Check`);
+
+} catch (e) {
+	console.log(`\x1b[31mFAILED: Layered Check`);
+	exitCode = 1;
 }
 
 process.exit(exitCode);

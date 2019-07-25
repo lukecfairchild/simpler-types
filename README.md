@@ -16,7 +16,7 @@ Throws an exception anytime the input does not match the type.
 ```
 
 ### Type.get()
-Returns the type of any provided variable.
+Returns the name of the type provided.
 ``` javascript
 	Type.get(input);
 ```
@@ -36,17 +36,17 @@ Returns true/false based on if input matches the type.
 
 	const myInstance = new MyClass();
 
-	Type.get(myInstance); // MyClass
-	Type.get(0); // Number
-	Type.get(''); // String
-	Type.get(false); // Boolean
-	Type.get(() => {}); // Function
-	Type.get([]); // Array
-	Type.get({}); // Object
-	Type.get(NaN); // NaN
-	Type.get(null); // null
-	Type.get(undefined); // undefined
-	Type.get(Symbol('id')); // Symbol
+	Type.get(myInstance); // "MyClass"
+	Type.get(0); // "Number"
+	Type.get(''); // "String"
+	Type.get(false); // "Boolean"
+	Type.get(() => {}); // "Function"
+	Type.get([]); // "Array"
+	Type.get({}); // "Object"
+	Type.get(NaN); // "NaN"
+	Type.get(null); // "null"
+	Type.get(undefined); // "undefined"
+	Type.get(Symbol('id')); // "Symbol"
 
 	Type.assert(myInstance, MyClass);
 	Type.assert(0, Number);
@@ -73,6 +73,31 @@ Returns true/false based on if input matches the type.
 	Type.is(null, null); // true
 	Type.is(undefined, undefined); // true
 	Type.is(Symbol('id'), Symbol); // true
+```
+
+### Layered Checks
+``` javascript
+Type.assert(input, {
+	name : String,
+	age  : Number,
+	address : {
+		street  : String,
+		zipcode : Number,
+		state   : String,
+		country : String
+	}
+});
+
+Type.is(input, {
+	name : String,
+	age  : Number,
+	address : {
+		street  : String,
+		zipcode : Number,
+		state   : String,
+		country : String
+	}
+});
 ```
 
 ## License
