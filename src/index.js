@@ -56,55 +56,40 @@ const toString = (value) => {
 	}
 }
 const getValueType = (value) => {
-	if (value === undefined) {
-		return undefined;
-	}
-
-	if (value === null) {
-		return null;
-	}
-
-	if (typeof value === 'number') {
-		if (isNaN(value)) {
-			return NaN;
+	switch (value) {
+		case undefined :
+		case null : {
+			return value;
 		}
-
-		return Number;
 	}
 
-	if (typeof value === 'symbol') {
-		return Symbol;
-	}
+	switch (typeof value) {
+		case 'boolean'  : return Boolean;
+		case 'function' : return Function;
+		case 'number'   : {
+			if (isNaN(value)) {
+				return NaN;
+			}
 
-	if (typeof value === 'string') {
-		return String;
-	}
+			return Number;
+		}
+		case 'object' : {
+			if (value instanceof Array) {
+				return Array;
+			}
 
-	if (typeof value === 'function') {
-		return Function;
-	}
-
-	if (typeof value === 'boolean') {
-		return Boolean;
-	}
-
-	if (typeof value === 'object'
-	&&  value instanceof Array) {
-		return Array;
-	}
-
-	if (typeof value === 'object'
-	&&  value instanceof Object) {
-		return Object(value).constructor;
+			if (value instanceof Object) {
+				return Object(value).constructor;
+			}
+		}
+		case 'string' : return String;
+		case 'symbol' : return Symbol;
 	}
 }
 const getTypeName = (type) => {
-	if (type === undefined) {
-		return 'undefined';
-	}
-
-	if (type === null) {
-		return 'null';
+	switch (type) {
+		case undefined : return 'undefined';
+		case null      : return 'null';
 	}
 
 	if (typeof type === 'number'
