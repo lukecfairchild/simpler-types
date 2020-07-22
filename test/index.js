@@ -161,7 +161,7 @@ try {
 	console.log(`\x1b[32mPASSED: Layered Check`);
 
 } catch (e) {
-	console.log(`\x1b[31mFAILED: Layered Check`);
+	console.log(`\x1b[31mFAILED: Layered Check`, e);
 	exitCode = 1;
 }
 

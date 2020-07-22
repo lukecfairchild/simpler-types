@@ -1,5 +1,19 @@
 const Type = require('../src');
 
+const options = {
+	port    : 1234,
+	address : '0.0.0.0'
+}
+
+Type.assert([options.ssl], [undefined, Boolean]);
+
+//process.exit(0);
+
+
+
+
+
+
 class Kid {}
 
 var kid1 = new Kid()

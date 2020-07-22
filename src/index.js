@@ -55,6 +55,46 @@ const toString = (value) => {
 		}
 	}
 }
+const toTypeString = (value) => {
+	switch (Type.get(value)) {
+		case 'Array'  :
+		case 'Object' : {
+			if (value instanceof Array) {
+				let arrayString = '[';
+
+				for (let i = 0; i < value.length; i++) {
+					arrayString += toTypeString(value[i]);
+
+					if (i < value.length - 1) {
+						arrayString += ', ';
+					}
+				}
+
+				return arrayString + ']';
+			}
+
+			let objectSting = '{';
+
+			let i = 0;
+
+			for (let key in value) {
+				objectSting += key + ': ' + toTypeString(value[key]);
+
+				if (Object.keys(value).length - 1 > i) {
+					objectSting += ', ';
+				}
+
+				i++;
+			}
+
+			return objectSting + '}';
+		}
+
+		default : {
+			return getTypeName(value);
+		}
+	}
+}
 const getValueType = (value) => {
 	switch (value) {
 		case undefined :
@@ -122,104 +162,74 @@ const iterate = (values, types, indent) => {
 
 	indent = indent || 0;
 
+	const space = '  '.repeat(indent);
+
 	if (types instanceof Array) {
-		let returns;
-
-		// Only 1 type is supported per array
-		if (types.length > 1) {
-			const typesNames = [];
-
-			types.forEach(type => typesNames.push(getTypeName(type)));
-
+		if (Type.get(values) !== 'Array') {
 			return {
-				expected : '1 Type in array.',
-				received : `${types.length} Type's in array.`,
-				data     : `\x1b[41m[${typesNames.join(', ')}]\x1b[0m`,
-				meta     : {
-					type    : 'exception',
-					message : 'You can only have 1 Type per array'
-
-				}
-			}
+				expected : `[${toTypeString(types)}]`,
+				received : toString(values),
+				data     : '',
+				meta     : undefined
+			};
 		}
 
-		// Convert Types to nameTypes
-		const typeNames = [];
+		const valueResults  = values.map((value) => {
+			console.log(`${space}VALUE:`, toString(value));
+			const typeResults = types.map((type) => {
+				const typeName      = getTypeName(type);
+				const valueTypeName = Type.get(value);
+				const valueType     = getValueType(value);
+				console.log(`${space}  Testing:`, typeName);
 
-		for (let i in types) {
-			const type     = types[i];
-			const typeName = getTypeName(type);
-
-			switch (typeName) {
-				case 'Object':
-				case 'Array': {
-					typeNames.push(typeName);
-					break;
-				}
-				default: {
-					typeNames.push(getTypeName(type));
-				}
-			}
-		}
-
-		for (let i = values.length -1; i >= 0 ; i--){
-			const value         = values[i];
-			const valueTypeName = Type.get(value);
-			const valueType     = getValueType(value);
-
-			if (!typeNames.includes(valueTypeName)) {
-				if (types.includes(NaN)) {
-					if (valueType === Number) {
-						const data = new Array(i);
-						data.push(`\x1b[41m${toString(value)}\x1b[0m`);
-
-						return {
-							expected : 'NaN',
-							received : 'Number',
-							data     : `[${data.join(', ')}]`
-						};
+				switch (typeName) {
+					case 'Object' :
+					case 'Array'  : {
+						const iterateResults = iterate(value, type, indent + 1);
+						console.log(`${space}    Error1: ${typeName}`, !iterateResults);
+						return !iterateResults
+					}
+					default : {
+						if (valueTypeName !== typeName) {
+							console.log(`${space}    Error2: ${typeName}`, false);
+							return false
+						}
 					}
 
-				} else {
-					const data = new Array(i);
-
-					data.push(`\x1b[41m${toString(value)}\x1b[0m`);
-
-					return {
-						expected : `${typeNames.join(' || ')}`,
-						received : valueTypeName,
-						data     : `[${data.join(', ')}]`
-					};
+					console.log(`${space}    Matched1: ${typeName}`, true);
+					return true;
 				}
+			});
+
+			console.log('typeResults', typeResults);
+			console.log('value:', toString(value));
+
+			if (typeResults.includes(true)) {
+				return true;
 			}
 
-			switch (valueType) {
-				case Object:
-				case Array: {
-					const result = iterate(value, types[0], indent);
+			return false;
+		});
 
-					if (result) {
-						const data = new Array(i);
-						data.push(result.data);
+		console.log('valueResults', valueResults);
 
-						return {
-							expected : result.expected,
-							received : result.received,
-							data     : `[${data.join(', ')}]`,
-							meta     : result.meta
-						};
-					}
-				}
-			}
+		if (valueResults.includes(false)) {
+			return {
+				expected : `[${toTypeString(types)}]`,
+				received : toString(values),
+				data     : '',
+				meta     : undefined
+			};
 		}
-
-		return returns;
 
 	} else {
 		for (let key in types) {
 			const value      = values[key];
 			const type       = types[key];
-			const typeName   = getTypeName(type)
+			const typeName   = getTypeName(type);
+			console.log(`${space}VALUE:`, value);
+
+			console.log(`${space}  Testing:`, typeName);
 
 			switch (typeName) {
 				case 'Object':
@@ -227,6 +237,7 @@ const iterate = (values, types, indent) => {
 					const result = iterate(value, type, indent + 1);
 
 					if (result) {
+						console.log(`${space}    Error3: ${typeName}`);
 						const data = `{\n${'    '.repeat(indent + 1)}${key}: ${result.data}\n${'    '.repeat(indent)}}`;
 
 						return {
@@ -240,6 +251,7 @@ const iterate = (values, types, indent) => {
 			}
 
 			if (!isType(value, type)) {
+				console.log(`${space}    Error4: ${typeName}`);
 				const valueType = Type.get(value);
 				const data      = `{\n${'    '.repeat(indent + 1)}${key}: \x1b[41m${toString(value)}\x1b[0m\n${'    '.repeat(indent)}}`;
 
@@ -249,6 +261,8 @@ const iterate = (values, types, indent) => {
 					data     : data
 				};
 			}
+
+			console.log(`${space}    Matched2: ${typeName}`);
 		}
 	}
 }
