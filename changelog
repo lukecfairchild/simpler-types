@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.3] - 2020-09-03
+### Added
+- Added getType examples and documentation
+
+## [1.1.2] - 2020-09-03
+### Renamed to simpler-types
+
 ## [1.1.1] - 2020-07-21
 ### Added
 - Added support for multi-type arrays

@@ -23,6 +23,12 @@ Returns the name of the type provided.
 	Type.get(input);
 ```
 
+### Type.getType()
+Returns the class type of a provided variable.
+``` javascript
+	Type.getType(inputy);
+```
+
 ### Type.is()
 Returns true/false based on if input matches the type. The input and type can objects or arrays with embedded types within them or a single type.
 ``` javascript
@@ -49,6 +55,18 @@ Returns true/false based on if input matches the type. The input and type can ob
 	Type.get(null); // "null"
 	Type.get(undefined); // "undefined"
 	Type.get(Symbol('id')); // "Symbol"
+
+	Type.getType(myInstance); // MyClass
+	Type.getType(0); // Number
+	Type.getType(''); // String
+	Type.getType(false); // Boolean
+	Type.getType(() => {}); // Function
+	Type.getType([]); // Array
+	Type.getType({}); // Object
+	Type.getType(NaN); // NaN
+	Type.getType(null); // null
+	Type.getType(undefined); // undefined
+	Type.getType(Symbol('id')); // Symbol
 
 	Type.assert(myInstance, MyClass);
 	Type.assert(0, Number);
