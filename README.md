@@ -1,11 +1,11 @@
-# Simple Type Assert
+# Simpler Types
 
 A simplified way of verifying variable types.
 
 ## Installation
 
 ``` bash
-	$ npm install simple-type-assert
+	$ npm install simpler-types
 ```
 ## Whats new?
 1.1.1 - We added the ability for the "assert" and "is" functions to accept and check multi-layered objects and arrays for types. See the "Layered Checks" section down below for examples.
@@ -104,5 +104,5 @@ Type.is(input, {
 
 ## License
 
-Simple Type Assert is freely distributable under the terms of the [MIT license](https://gitlab.com/lukecfairchild/simple-type-assert/blob/master/LICENSE).
+Simpler Types is freely distributable under the terms of the [MIT license](https://github.com/lukecfairchild/simpler-types/blob/master/LICENSE).
 
