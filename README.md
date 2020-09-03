@@ -32,7 +32,7 @@ Returns true/false based on if input matches the type. The input and type can ob
 ## Examples
 
 ``` javascript
-	const Type = require('simple-type-assert');
+	const Type = require('simpler-types');
 
 	class MyClass {}
 
