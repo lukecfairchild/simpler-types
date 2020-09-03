@@ -8,7 +8,7 @@ A simplified way of verifying variable types.
 	$ npm install simpler-types
 ```
 ## Whats new?
-1.1.1 - We added the ability for the "assert" and "is" functions to accept and check multi-layered objects and arrays for types. See the "Layered Checks" section down below for examples.
+1.1.3 - Added Type.getType() examples and documentation.
 
 ## Methods
 ### Type.assert()
@@ -26,7 +26,7 @@ Returns the name of the type provided.
 ### Type.getType()
 Returns the class type of a provided variable.
 ``` javascript
-	Type.getType(inputy);
+	Type.getType(input);
 ```
 
 ### Type.is()
