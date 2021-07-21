@@ -8,7 +8,7 @@ A simplified way of verifying variable types.
 	$ npm install simpler-types
 ```
 ## Whats new?
-1.1.3 - Added Type.getType() examples and documentation.
+1.1.5 - Fixed NaN arrays not working.
 
 ## Methods
 ### Type.assert()

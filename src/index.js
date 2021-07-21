@@ -167,7 +167,7 @@ const iterate = (values, types, indent) => {
 	if (types instanceof Array) {
 		if (Type.get(values) !== 'Array') {
 			return {
-				expected : `[${toTypeString(types)}]`,
+				expected : toTypeString(types),
 				received : toString(values),
 				data     : '',
 				meta     : undefined
@@ -180,7 +180,7 @@ const iterate = (values, types, indent) => {
 				const typeName      = getTypeName(type);
 				const valueTypeName = Type.get(value);
 				const valueType     = getValueType(value);
-				console.log(`${space}  Testing:`, typeName);
+				console.log(`${space}  Testing:`, typeName, typeName === 'NaN');
 
 				switch (typeName) {
 					case 'Object' :
@@ -189,9 +189,17 @@ const iterate = (values, types, indent) => {
 						console.log(`${space}    Error1: ${typeName}`, !iterateResults);
 						return !iterateResults
 					}
+					case 'NaN' : {
+						if (valueTypeName === typeName) {
+							console.log(`${space}    Error2: ${typeName}`, false);
+							return false
+						}
+
+						return true;
+					}
 					default : {
 						if (valueTypeName !== typeName) {
-							console.log(`${space}    Error2: ${typeName}`, false);
+							console.log(`${space}    Error3: ${typeName}`, false);
 							return false
 						}
 					}
@@ -215,7 +223,7 @@ const iterate = (values, types, indent) => {
 
 		if (valueResults.includes(false)) {
 			return {
-				expected : `[${toTypeString(types)}]`,
+				expected : toTypeString(types),
 				received : toString(values),
 				data     : '',
 				meta     : undefined
@@ -237,7 +245,7 @@ const iterate = (values, types, indent) => {
 					const result = iterate(value, type, indent + 1);
 
 					if (result) {
-						console.log(`${space}    Error3: ${typeName}`);
+						console.log(`${space}    Error4: ${typeName}`);
 						const data = `{\n${'    '.repeat(indent + 1)}${key}: ${result.data}\n${'    '.repeat(indent)}}`;
 
 						return {
@@ -251,7 +259,7 @@ const iterate = (values, types, indent) => {
 			}
 
 			if (!isType(value, type)) {
-				console.log(`${space}    Error4: ${typeName}`);
+				console.log(`${space}    Error5: ${typeName}`);
 				const valueType = Type.get(value);
 				const data      = `{\n${'    '.repeat(indent + 1)}${key}: \x1b[41m${toString(value)}\x1b[0m\n${'    '.repeat(indent)}}`;
 

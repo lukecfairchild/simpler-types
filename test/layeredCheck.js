@@ -1,74 +1,63 @@
 const Type = require('../src');
 
-const options = {
-	port    : 1234,
-	address : '0.0.0.0'
-}
+const options = {}
 
-Type.assert([options.ssl], [undefined, Boolean]);
+Type.assert([options.undefined], [undefined, Boolean]);
 
-//process.exit(0);
+class Class {}
 
-
-
-
-
-
-class Kid {}
-
-var kid1 = new Kid()
-var kid2 = new Kid()
+var instance1 = new Class()
+var instance2 = new Class()
 
 var input = {
-	id : {
-		hi : () => {},
-		what: null,
-		meh: 'string',
-		hi1: kid2,
-		hi2: Symbol('hi'),
-		hi3: Kid,
-		array: [{
-			test: false,
-			fail: true,
-			fourth: [{
-				fail : '1',
-				hi2  : '1',
-				arr  : ['1', '1'],
-				x    : '1'
+	object : {
+		function  : () => {},
+		null      : null,
+		string    : 'string',
+		class     : instance2,
+		symbol    : Symbol('hi'),
+		function2 : Class,
+		array     : [{
+			bool  : false,
+			bool2 : true,
+			array : [{
+				string  : '1',
+				string2 : '1',
+				array   : ['1', '1'],
+				string3 : '1'
 			},{
-				fail : '2',
-				hi2  : '2',
-				arr  : ['2', '2'],
-				x    : '2'
+				string  : '2',
+				string2 : '2',
+				array   : ['2', '2'],
+				string3 : '2'
 			}]
 		}]
 	},
-	name : 'name string',
-	age  : 42,
-	kids : [kid1, kid2, 'hi', () => {}]
+	string : 'string',
+	number : 42,
+	array  : [instance1, instance2, 'hi', () => {}]
 };
 
-var x = process.hrtime()
 Type.assert(input, {
-	id : {
-		hi    : Function,
-		what  : null,
-		meh   : String,
-		hi1   : Kid,
-		hi2   : Symbol,
-		hi3   : Function,
-		array : [{
-			test   : Boolean,
-			fail   : Boolean,
-			fourth : [{
-				fail : String,
-				hi2   : String,
-				arr  : [String],
-				x    : String
+	object : {
+		function  : Function,
+		null      : null,
+		string    : String,
+		class     : Class,
+		symbol    : Symbol,
+		function2 : Function,
+		array     : [{
+			bool  : Boolean,
+			bool2 : Boolean,
+			array : [{
+				string  : String,
+				string2 : String,
+				array   : [String],
+				string3 : String
 			}]
 		}]
 	},
-	name : String,
-	age  : Number,
-	kids : [NaN]
+	string : String,
+	number : Number,
+	array  : [NaN]
 });

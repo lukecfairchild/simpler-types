@@ -1,6 +1,6 @@
 {
   "name": "simpler-types",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "A simplified way of verifying variable types.",
   "main": "src/index.js",
   "scripts": {

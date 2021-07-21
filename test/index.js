@@ -56,9 +56,9 @@ const toString = (value) => {
 
 const Type = require('../src');
 
-class TestClass {}
+class BlankClass {}
 
-var testInstance = new TestClass();
+const testInstance = new BlankClass();
 
 let exitCode = 0;
 const values = {
@@ -94,9 +94,9 @@ const values = {
 		value : null,
 		class : null
 	},
-	TestClass : {
+	BlankClass : {
 		value : testInstance,
-		class : TestClass
+		class : BlankClass
 	}
 };
 
