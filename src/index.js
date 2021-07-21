@@ -1,3 +1,4 @@
+const debug = false;
 
 const Type = {};
 
@@ -175,23 +176,23 @@ const iterate = (values, types, indent) => {
 		}
 
 		const valueResults  = values.map((value) => {
-			console.log(`${space}VALUE:`, toString(value));
+			if (debug) console.log(`${space}VALUE:`, toString(value));
 			const typeResults = types.map((type) => {
 				const typeName      = getTypeName(type);
 				const valueTypeName = Type.get(value);
 				const valueType     = getValueType(value);
-				console.log(`${space}  Testing:`, typeName, typeName === 'NaN');
+				if (debug) onsole.log(`${space}  Testing:`, typeName, typeName === 'NaN');
 
 				switch (typeName) {
 					case 'Object' :
 					case 'Array'  : {
 						const iterateResults = iterate(value, type, indent + 1);
-						console.log(`${space}    Error1: ${typeName}`, !iterateResults);
+						if (debug) console.log(`${space}    Error1: ${typeName}`, !iterateResults);
 						return !iterateResults
 					}
 					case 'NaN' : {
 						if (valueTypeName === typeName) {
-							console.log(`${space}    Error2: ${typeName}`, false);
+							if (debug) console.log(`${space}    Error2: ${typeName}`, false);
 							return false
 						}
 
@@ -199,18 +200,18 @@ const iterate = (values, types, indent) => {
 					}
 					default : {
 						if (valueTypeName !== typeName) {
-							console.log(`${space}    Error3: ${typeName}`, false);
+							if (debug) console.log(`${space}    Error3: ${typeName}`, false);
 							return false
 						}
 					}
 
-					console.log(`${space}    Matched1: ${typeName}`, true);
+					if (debug) console.log(`${space}    Matched1: ${typeName}`, true);
 					return true;
 				}
 			});
 
-			console.log('typeResults', typeResults);
-			console.log('value:', toString(value));
+			if (debug) console.log('typeResults', typeResults);
+			if (debug) console.log('value:', toString(value));
 
 			if (typeResults.includes(true)) {
 				return true;
@@ -219,7 +220,7 @@ const iterate = (values, types, indent) => {
 			return false;
 		});
 
-		console.log('valueResults', valueResults);
+		if (debug) console.log('valueResults', valueResults);
 
 		if (valueResults.includes(false)) {
 			return {
@@ -235,9 +236,9 @@ const iterate = (values, types, indent) => {
 			const value      = values[key];
 			const type       = types[key];
 			const typeName   = getTypeName(type);
-			console.log(`${space}VALUE:`, value);
+			if (debug) console.log(`${space}VALUE:`, value);
 
-			console.log(`${space}  Testing:`, typeName);
+			if (debug) console.log(`${space}  Testing:`, typeName);
 
 			switch (typeName) {
 				case 'Object':
@@ -245,7 +246,7 @@ const iterate = (values, types, indent) => {
 					const result = iterate(value, type, indent + 1);
 
 					if (result) {
-						console.log(`${space}    Error4: ${typeName}`);
+						if (debug) console.log(`${space}    Error4: ${typeName}`);
 						const data = `{\n${'    '.repeat(indent + 1)}${key}: ${result.data}\n${'    '.repeat(indent)}}`;
 
 						return {
@@ -259,7 +260,7 @@ const iterate = (values, types, indent) => {
 			}
 
 			if (!isType(value, type)) {
-				console.log(`${space}    Error5: ${typeName}`);
+				if (debug) console.log(`${space}    Error5: ${typeName}`);
 				const valueType = Type.get(value);
 				const data      = `{\n${'    '.repeat(indent + 1)}${key}: \x1b[41m${toString(value)}\x1b[0m\n${'    '.repeat(indent)}}`;
 
@@ -270,7 +271,7 @@ const iterate = (values, types, indent) => {
 				};
 			}
 
-			console.log(`${space}    Matched2: ${typeName}`);
+			if (debug) console.log(`${space}    Matched2: ${typeName}`);
 		}
 	}
 }
