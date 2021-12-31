@@ -55,9 +55,9 @@ const toString = (value) => {
 			return objectSting + '}';
 		}
 	}
-}
+};
 const toTypeString = (value) => {
-	switch (Type.get(value)) {
+	switch (Type.getName(value)) {
 		case 'Array'  :
 		case 'Object' : {
 			if (value instanceof Array) {
@@ -95,7 +95,7 @@ const toTypeString = (value) => {
 			return getTypeName(value);
 		}
 	}
-}
+};
 const getValueType = (value) => {
 	switch (value) {
 		case undefined :
@@ -126,7 +126,7 @@ const getValueType = (value) => {
 		case 'string' : return String;
 		case 'symbol' : return Symbol;
 	}
-}
+};
 const getTypeName = (type) => {
 	switch (type) {
 		case undefined : return 'undefined';
@@ -144,10 +144,10 @@ const getTypeName = (type) => {
 	}
 
 	return type.constructor.name;
-}
+};
 const isType = (value, type) => {
 	const typeName  = getTypeName(type);
-	const valueType = Type.get(value);
+	const valueType = Type.getName(value);
 
 	if (typeName === 'NaN'
 	&&  valueType !== 'Number') {
@@ -155,7 +155,7 @@ const isType = (value, type) => {
 	}
 
 	return valueType === typeName;
-}
+};
 const iterate = (values, types, indent) => {
 	if (typeof types !== 'object') {
 		return;
@@ -166,7 +166,7 @@ const iterate = (values, types, indent) => {
 	const space = '  '.repeat(indent);
 
 	if (types instanceof Array) {
-		if (Type.get(values) !== 'Array') {
+		if (Type.getName(values) !== 'Array') {
 			return {
 				expected : toTypeString(types),
 				received : toString(values),
@@ -179,7 +179,7 @@ const iterate = (values, types, indent) => {
 			if (debug) console.log(`${space}VALUE:`, toString(value));
 			const typeResults = types.map((type) => {
 				const typeName      = getTypeName(type);
-				const valueTypeName = Type.get(value);
+				const valueTypeName = Type.getName(value);
 				const valueType     = getValueType(value);
 				if (debug) onsole.log(`${space}  Testing:`, typeName, typeName === 'NaN');
 
@@ -261,7 +261,7 @@ const iterate = (values, types, indent) => {
 
 			if (!isType(value, type)) {
 				if (debug) console.log(`${space}    Error5: ${typeName}`);
-				const valueType = Type.get(value);
+				const valueType = Type.getName(value);
 				const data      = `{\n${'    '.repeat(indent + 1)}${key}: \x1b[41m${toString(value)}\x1b[0m\n${'    '.repeat(indent)}}`;
 
 				return {
@@ -274,7 +274,7 @@ const iterate = (values, types, indent) => {
 			if (debug) console.log(`${space}    Matched2: ${typeName}`);
 		}
 	}
-}
+};
 
 
 Type.assert = (value, type) => {
@@ -297,14 +297,15 @@ Type.assert = (value, type) => {
 
 	} else if (!Type.is(value, type, true)) {
 		throw new Error(
-			`Incorrect type received.\n  Expected: ${getTypeName(type)} \n  Received: ${Type.get(value)}\n     Value: ${toString(value)}`
+			`Incorrect type received.\n  Expected: ${getTypeName(type)} \n  Received: ${Type.getName(value)}\n     Value: ${toString(value)}`
 		);
 	}
-}
-Type.get = (value) => {
+};
+Type.getName = (value) => {
 	return getTypeName(getValueType(value))
-}
+};
 Type.getType = getValueType;
+Type.get = getValueType;
 Type.is = (value, type) => {
 	if (typeof type === 'object'
 	&&  type instanceof Object) {
@@ -329,7 +330,7 @@ Type.is = (value, type) => {
 	}
 
 	return isType(value, type);
-}
+};
 
 
 module.exports = Type;
