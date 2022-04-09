@@ -1,8 +1,8 @@
-const debug = false;
+const debug = true;
 
 const Type = {};
 
-const toString = (value) => {
+const toString = (value, space = '') => {
 	switch (value) {
 		case null:
 		case undefined:
@@ -11,18 +11,18 @@ const toString = (value) => {
 
 	switch (typeof value) {
 		case 'symbol':
-			return value.toString();
+			return space + value.toString();
 		case 'function':
 		case 'boolean':
-			return value;
+			return space + value;
 		case 'string':
-			return JSON.stringify(value);
+			return space + JSON.stringify(value);
 		case 'number':
 			if (isNaN(value)) {
-				return value;
+				return space + value;
 			}
 
-			return value;
+			return space + value;
 		case 'object': {
 			if (value instanceof Array) {
 				let arrayString = '[';
@@ -52,7 +52,7 @@ const toString = (value) => {
 				i++;
 			}
 
-			return objectSting + '}';
+			return space + objectSting + '}';
 		}
 	}
 };
@@ -157,13 +157,15 @@ const isType = (value, type) => {
 	return valueType === typeName;
 };
 const iterate = (values, types, indent) => {
-	if (typeof types !== 'object') {
-		return;
-	}
-
 	indent = indent || 0;
 
 	const space = '  '.repeat(indent);
+
+	if (typeof types !== 'object') {
+		console.log(`${space}Not a object, returning`);
+		return false;
+	}
+
 
 	if (types instanceof Array) {
 		if (Type.getName(values) !== 'Array') {
@@ -181,14 +183,14 @@ const iterate = (values, types, indent) => {
 				const typeName      = getTypeName(type);
 				const valueTypeName = Type.getName(value);
 				const valueType     = getValueType(value);
-				if (debug) onsole.log(`${space}  Testing:`, typeName, typeName === 'NaN');
+				if (debug) console.log(`${space}  Testing:`, value, typeName);
 
 				switch (typeName) {
 					case 'Object' :
 					case 'Array'  : {
 						const iterateResults = iterate(value, type, indent + 1);
-						if (debug) console.log(`${space}    Error1: ${typeName}`, !iterateResults);
-						return !iterateResults
+						if (debug) console.log(`${space}    Error1: ${typeName}`, iterateResults, `\n${space}value:\n    `, toString(value, space), `\n${space}type:\n    `, toString(type, space));
+						return iterateResults
 					}
 					case 'NaN' : {
 						if (valueTypeName === typeName) {
@@ -210,8 +212,8 @@ const iterate = (values, types, indent) => {
 				}
 			});
 
-			if (debug) console.log('typeResults', typeResults);
-			if (debug) console.log('value:', toString(value));
+			if (debug) console.log(`${space}typeResults`, typeResults);
+			if (debug) console.log(`${space}value:`, toString(value));
 
 			if (typeResults.includes(true)) {
 				return true;
@@ -220,7 +222,7 @@ const iterate = (values, types, indent) => {
 			return false;
 		});
 
-		if (debug) console.log('valueResults', valueResults);
+		if (debug) console.log(`${space}valueResults`, valueResults);
 
 		if (valueResults.includes(false)) {
 			return {
@@ -238,7 +240,7 @@ const iterate = (values, types, indent) => {
 			const typeName   = getTypeName(type);
 			if (debug) console.log(`${space}VALUE:`, value);
 
-			if (debug) console.log(`${space}  Testing:`, typeName);
+			if (debug) console.log(`${space}  Testing:`, value, typeName);
 
 			switch (typeName) {
 				case 'Object':
@@ -274,6 +276,8 @@ const iterate = (values, types, indent) => {
 			if (debug) console.log(`${space}    Matched2: ${typeName}`);
 		}
 	}
+
+	return false;
 };
 
 

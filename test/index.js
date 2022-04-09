@@ -56,11 +56,30 @@ const toString = (value) => {
 
 const Type = require('../src');
 
+let exitCode = 0;
+
+if (Type.is(['string'], [Object])) { // true, incorrect
+	console.log(`\x1b[31mFAILED: ['string'] !== [Object]`);
+	exitCode = 1;
+
+} else {
+	console.log(`\x1b[32mPASSED: ['string'] !== [Object]`);
+}
+
+
+try {
+	Type.assert('string', Object);
+	console.log(`\x1b[31mFAILED: String !== Object`);
+	exitCode = 1;
+
+} catch (e) {
+	console.log(`\x1b[32mPASSED: String !== Object`);
+}
+
 class BlankClass {}
 
 const testInstance = new BlankClass();
 
-let exitCode = 0;
 const values = {
 	Number    : {
 		value : 1,
