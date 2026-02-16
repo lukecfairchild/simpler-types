@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+
+## [2.0.0] 2026-02-16
+### Breaking changes
+ - Type.get defaults to returning the type and not the name, added Type.getName() method whixh returns a string of the type name.
+
 ## [1.1.4] - 2020-09-03
 ### Typo in README.md
 
